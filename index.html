@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cultured Diary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Example for Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+
+    <meta name="theme-color" content="#1a1a1a">
+
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0a0a0a',
+                            800: '#1a1a1a',
+                            700: '#2a2a2a',
+                            600: '#3a3a3a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: #0a0a0a;
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(115, 107, 107, 0.162) 1.5px, transparent 0);
+            background-size: 20px 20px;
+            font-family: 'Rubik', sans-serif;
+        }
+
+        .glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 1px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+        #username-edit-box {
+            background: rgba(22, 22, 22, 0.85);
+            /* matches your image */
+            backdrop-filter: blur(10px) saturate(140%);
+            -webkit-backdrop-filter: blur(10px) saturate(140%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+            border-radius: 1rem;
+        }
+
+
+
+        .star {
+            cursor: pointer;
+            color: #4a5568;
+            transition: all 0.2s ease;
+        }
+
+        .star.filled {
+            color: #f6ad55;
+            transform: scale(1.1);
+        }
+
+        .star:hover {
+            transform: scale(1.2);
+        }
+
+    .modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.92);
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modal.active {
+  display: flex;
+  opacity: 1;
+}
+
+
+        .nav-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-hover {
+            transition: all 0.2s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.2s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gradient-text {
+            background: none !important;
+            -webkit-background-clip: initial !important;
+            -webkit-text-fill-color: white !important;
+            background-clip: initial !important;
+            color: white !important;
+        }
+
+
+        .scroll-hidden {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .scroll-hidden::-webkit-scrollbar {
+            display: none;
+        }
+        .page {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  padding-top: 4.5rem; /* adjust if your navbar is taller or shorter */
+}
+
+.page.hidden {
+  opacity: 0;
+  transform: scale(0.98);
+  pointer-events: none;
+}
+
+    </style>
+</head>
+
+<body class="bg-dark-900 min-h-screen text-white">
+    <!-- Navigation -->
+    <nav class="glass sticky top-0 z-40 border-b border-white/10">
+        <div class="container mx-auto px-4 py-2">
+            <div class="flex justify-between items-center">
+<h1 class="text-2xl font-bold gradient-text flex items-center gap-2 mr-4">
+                    <span class="text-2xl"></span>
+                    Cultured Diary
+                </h1>
+                <div class="flex gap-2 overflow-x-auto scroll-hidden">
+                    <button onclick="showPage('home')" class="nav-btn px-4 py-2 rounded-lg text-lg whitespace-nowrap"
+                        id="home-btn">Home</button>
+                    <button onclick="showPage('search')" class="nav-btn px-4 py-2 rounded-lg text-lg whitespace-nowrap"
+                        id="search-btn">Search</button>
+                    <button onclick="showPage('diary')" class="nav-btn px-4 py-2 rounded-lg text-lg whitespace-nowrap"
+                        id="diary-btn">Diary</button>
+                    <button onclick="showPage('watchlist')"
+                        class="nav-btn px-4 py-2 rounded-lg text-lg whitespace-nowrap"
+                        id="watchlist-btn">Watchlist</button>
+                    <button onclick="showPage('profile')" class="nav-btn px-4 py-2 rounded-lg text-lg whitespace-nowrap"
+                        id="profile-btn">Profile</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <!-- Full-Width Hero Banner -->
+
+
+<div id="home-page" class="page container mx-auto p-4 pt-6 animate-fade-in">
+        <!-- Hero Banner -->
+        <!-- Hero Banner with Centered Outlined Button -->
+        <section class="w-full text-center pt-6 pb-6 px-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-3 leading-tight">
+                Keep track of what you watch — from anime to cinema.
+            </h1>
+            <p class="text-lg text-gray-400 mb-4">
+                Your personal diary for movies, series, and anime.
+            </p>
+            <button onclick="showPage('search')"
+                class="border border-white text-white px-6 py-2 rounded-md text-lg hover:bg-white hover:text-black transition duration-300 mb-7">
+                Get Started
+            </button>
+        </section>
+
+
+        <!-- Stats Cards -->
+        <!-- Home Stats Rectangles -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <!-- Movies Watched -->
+            <!-- Movies Watched -->
+            <div class="glass rounded-xl p-4 text-center card-hover cursor-pointer"
+                onclick="goToDiaryWithFilter('movie')">
+                <div class="text-xl font-bold text-white" id="home-movies-watched">0</div>
+                <div class="text-gray-400 text-lg">Movies Watched</div>
+            </div>
+
+            <!-- Series Watched -->
+            <div class="glass rounded-xl p-4 text-center card-hover cursor-pointer"
+                onclick="goToDiaryWithFilter('series')">
+                <div class="text-xl font-bold text-white" id="home-series-watched">0</div>
+                <div class="text-gray-400 text-lg">Series Watched</div>
+            </div>
+
+            <!-- Anime Watched -->
+            <div class="glass rounded-xl p-4 text-center card-hover cursor-pointer"
+                onclick="goToDiaryWithFilter('anime')">
+                <div class="text-xl font-bold text-white" id="home-anime-watched">0</div>
+                <div class="text-gray-400 text-lg">Anime Watched</div>
+            </div>
+
+            <!-- In Watchlist -->
+            <div onclick="showPage('watchlist')" class="glass rounded-xl p-4 text-center card-hover cursor-pointer">
+                <div class="text-xl font-bold text-white" id="home-watchlist-count">0</div>
+                <div class="text-gray-400 text-lg">In Watchlist</div>
+            </div>
+
+            <!-- Average Rating -->
+            <div class="glass rounded-xl p-4 text-center card-hover cursor-pointer">
+                <div class="text-xl font-bold text-white" id="home-avg-rating">0</div>
+                <div class="text-gray-400 text-lg">Avg Rating</div>
+            </div>
+
+            <!-- Watched This Month -->
+            <div class="glass rounded-xl p-4 text-center card-hover cursor-pointer">
+                <div class="text-xl font-bold text-white" id="home-this-month">0</div>
+                <div class="text-gray-400 text-lg">Watched This Month</div>
+            </div>
+        </div>
+
+
+        <!-- Recently Watched -->
+        <div class="glass rounded-xl p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4 gradient-text">Recently Watched</h2>
+            <div id="recent-watched" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="glass rounded-xl p-6 card-hover cursor-pointer" onclick="showPage('search')">
+                <div class="text-center">
+                    <div class="text-4xl mb-2"></div>
+                    <h3 class="text-lg font-bold mb-2">Discover</h3>
+                    <p class="text-gray-400 text-lg">Find your next favorite</p>
+                </div>
+            </div>
+            <div class="glass rounded-xl p-6 card-hover cursor-pointer" onclick="showPage('watchlist')">
+                <div class="text-center">
+                    <div class="text-4xl mb-2"></div>
+                    <h3 class="text-lg font-bold mb-2">Watchlist</h3>
+                    <p class="text-gray-400 text-lg">Your saved content</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Page -->
+    <div id="search-page" class="page hidden container mx-auto p-4 animate-fade-in">
+        <div class="glass rounded-xl p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4 text-white">Discover...</h2>
+            <div class="flex flex-col md:flex-row gap-2 mb-4">
+                <input type="text" id="search-input" placeholder="Search movies, series, or anime..."
+                    class="flex-1 p-2 bg-dark-800 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-white placeholder-gray-400 text-lg">
+
+                <button onclick="searchMedia()"
+                    class="bg-white text-black px-4 py-2 rounded-lg border border-black hover:bg-black hover:text-white transition-all duration-300 text-lg font-medium">
+                    Search
+                </button>
+            </div>
+
+            <div class="flex gap-4">
+                <label class="flex items-center text-gray-300">
+                    <input type="checkbox" id="search-movies" checked class="mr-2 accent-purple-600">
+                    Movies/Series
+                </label>
+                <label class="flex items-center text-gray-300">
+                    <input type="checkbox" id="search-anime" checked class="mr-2 accent-purple-600">
+                    Anime
+                </label>
+            </div>
+        </div>
+        <div id="search-results" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"></div>
+    </div>
+
+    <!-- Diary Page -->
+    <div id="diary-page" class="page hidden container mx-auto p-4 animate-fade-in">
+        <div class="glass rounded-xl p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4 gradient-text">My Diary</h2>
+            <select id="diary-filter" onchange="filterDiary()"
+                class="p-3 bg-dark-800 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <option value="all">All Media</option>
+                <option value="movie">Movies</option>
+                <option value="series">Series</option>
+                <option value="anime">Anime</option>
+            </select>
+        </div>
+        <div id="diary-entries" class="space-y-4"></div>
+    </div>
+
+    <!-- Watchlist Page -->
+    <div id="watchlist-page" class="page hidden container mx-auto p-4 animate-fade-in">
+        <div class="glass rounded-xl p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4 gradient-text">My Watchlist</h2>
+        </div>
+        <div id="watchlist-items" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"></div>
+    </div>
+
+    <!-- Profile Page -->
+    <div id="profile-page" class="page hidden container mx-auto p-4 animate-fade-in">
+        <div class="glass rounded-xl p-6 space-y-6">
+            <h2 class="text-xl font-bold gradient-text">Your Profile</h2>
+
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <!-- Avatar Upload -->
+                <label for="avatar-upload"
+                    class="w-24 h-24 overflow-hidden rounded-xl bg-white/10 border border-white/10 shadow-inner relative cursor-pointer group">
+                    <img id="profile-avatar" src="https://i.imgur.com/1XjXgJL.png" alt="Avatar"
+                        class="w-full h-full object-cover" />
+                    <input type="file" id="avatar-upload" accept="image/*" class="hidden" />
+                    <div
+                        class="absolute inset-0 bg-black/40 text-white text-xs items-center justify-center hidden group-hover:flex">
+                        Change
+                    </div>
+                </label>
+
+                <!-- Profile Info -->
+                <div class="text-white text-base space-y-2 flex-1">
+                    <p class="flex items-center gap-2">
+                        <strong>Username:</strong>
+                        <span id="profile-username" class="cursor-pointer hover:underline text-white/90"
+                            onclick="toggleUsernameEdit()">
+                            Guest
+                        </span>
+                    </p>
+                    <p><strong>Entries Logged:</strong> <span id="profile-total-entries">0</span></p>
+                    <p><strong>Reviews Written:</strong> <span id="profile-total-reviews">0</span></p>
+                    <p><strong>Total Time Watched:</strong> <span id="profile-time-watched">--</span></p>
+
+                    <!-- Badges -->
+                    <div id="profile-badges" class="flex flex-wrap gap-2 pt-2">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reset Button -->
+            <button onclick="resetProfile()"
+                class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-all duration-300 font-medium">
+                Reset Profile
+            </button>
+
+
+            <!-- Edit Username Modal -->
+            <div id="username-edit-box"
+                class="absolute top-[25%] left-1/2 transform -translate-x-1/2 z-50 p-4 hidden fade-zoom text-white w-full max-w-xs"
+                style="background: rgba(22, 22, 22, 0.7); backdrop-filter: blur(12px); border-radius: 1rem;">
+                <h3 class="font-semibold text-lg mb-2">Edit Username</h3>
+                <input id="username-input" type="text" placeholder="Enter new username"
+                    class="bg-white/10 text-white p-2 rounded w-full outline-none placeholder-white/50" />
+                <button onclick="saveUsername()"
+                    class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg mt-2 w-full transition-all">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Media Detail Modal -->
+    <div id="media-modal" class="modal fixed inset-0 bg-black/80 items-center justify-center z-50 p-4">
+        <div class="glass rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 id="modal-title" class="text-2xl font-bold gradient-text"></h3>
+                    <button onclick="closeModal()"
+                        class="text-gray-400 hover:text-white text-2xl transition-colors">&times;</button>
+                </div>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <img id="modal-poster" src="" alt="" class="w-full md:w-48 h-64 md:h-72 object-contain rounded-lg">
+                    <div class="flex-1">
+                        <p class="text-gray-400 mb-2" id="modal-year"></p>
+                        <p class="text-gray-400 mb-2" id="modal-genre"></p>
+                        <p class="text-gray-300 mb-6 leading-relaxed" id="modal-plot"></p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-300 mb-6"
+                            id="modal-extra-info">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button onclick="addToWatchlist()"
+                                class="bg-white text-black hover:bg-black hover:text-white px-6 py-3 rounded-lg transition-colors font-medium">
+                                Add to Watchlist
+                            </button>
+
+                            <button onclick="markAsWatched()"
+                                class="bg-white text-black hover:bg-black hover:text-white px-6 py-3 rounded-lg transition-colors font-medium">
+                                Add to Diary
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="rating-modal" class="modal fixed inset-0 bg-black/80 items-center justify-center z-50 p-4">
+        <div class="glass rounded-xl max-w-md w-full">
+            <div class="p-4">
+                <h3 class="text-xl font-bold mb-3 gradient-text">Rate & Review</h3>
+                <div class="mb-3">
+                    <label class="block text-base font-medium mb-2 text-gray-300">Rating (Optional):</label>
+                    <div class="flex gap-2 justify-center" id="rating-stars">
+                        <span class="star text-2xl" data-rating="1">★</span>
+                        <span class="star text-2xl" data-rating="2">★</span>
+                        <span class="star text-2xl" data-rating="3">★</span>
+                        <span class="star text-2xl" data-rating="4">★</span>
+                        <span class="star text-2xl" data-rating="5">★</span>
+                    </div>
+                    <button onclick="clearRating()"
+                        class="text-xs text-gray-400 hover:text-white mt-1 block mx-auto transition-colors">Clear
+                        Rating</button>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-base font-medium mb-2 text-gray-300">Review (Optional):</label>
+                    <textarea id="review-text" rows="2" placeholder="What did you think?"
+                        class="w-full p-2 bg-dark-800 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400 resize-none"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-base font-medium mb-1 text-gray-300">Date Watched:</label>
+                    <input type="date" id="watch-date"
+                        class="w-full p-2 bg-dark-800 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white">
+                </div>
+                <div class="mb-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-base font-medium mb-1 text-gray-300">Season (Optional):</label>
+                        <input type="number" id="season-number" placeholder="e.g., 1"
+                            class="w-full p-2 bg-dark-800 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-base font-medium mb-1 text-gray-300">Episode (Optional):</label>
+                        <input type="number" id="episode-number" placeholder="e.g., 12"
+                            class="w-full p-2 bg-dark-800 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white">
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <button onclick="saveDiaryEntry()"
+                        class="bg-white text-black hover:bg-black hover:text-white px-4 py-2 rounded-lg transition-all duration-300 font-medium flex-1">
+                        Save Entry
+                    </button>
+                    <button onclick="closeRatingModal()"
+                        class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors font-medium">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Global state
+        let currentMedia = null;
+        let currentRating = 0;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('home');
+            updateAllStats();
+         const debouncedSearch = debounce(searchMedia, 300);
+document.getElementById('search-input').addEventListener('input', debouncedSearch);
+
+            // Rating stars event listeners
+            document.querySelectorAll('#rating-stars .star').forEach(star => {
+                star.addEventListener('click', (e) => {
+                    currentRating = parseInt(e.target.dataset.rating);
+                    updateStars();
+                });
+            });
+            history.replaceState(null, '', location.href);
+
+            // Set today's date as default
+            //document.getElementById('watch-date').value = new Date().toISOString().split('T')[0];
+        });
+        window.addEventListener('popstate', handleBackNavigation);
+
+        function handleBackNavigation() {
+            if (document.getElementById('review-modal')?.classList.contains('flex')) {
+                closeReviewModal();
+                return;
+            }
+
+            if (document.getElementById('media-modal')?.classList.contains('active')) {
+                closeModal();
+                return;
+            }
+
+            if (document.getElementById('rating-modal')?.classList.contains('active')) {
+                closeRatingModal();
+                return;
+            }
+
+            if (document.getElementById('edit-diary-modal')?.classList.contains('active')) {
+                closeEditModal();
+                return;
+            }
+
+            const homeVisible = !document.getElementById('home-page').classList.contains('hidden');
+            if (!homeVisible) {
+                showPage('home');
+                history.pushState(null, '', location.href); // So the next back closes app
+            } else {
+                history.go(-1); // Now safe to exit app
+            }
+        }
+
+
+        function goToDiaryWithFilter(type) {
+            showPage('diary'); // Show Diary Page
+            document.getElementById('diary-filter').value = type;
+            filterDiary(); // This calls loadDiary() internally
+        }
+
+        // Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId + '-page').classList.remove('hidden');
+
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(pageId + '-btn').classList.add('active');
+
+            if (pageId !== 'home') {
+                history.pushState(null, '', location.href);
+            }
+
+            // Load page data
+            if (pageId === 'home') loadHome();
+
+            if (pageId === 'diary') {
+                document.getElementById('diary-filter').value = 'all';
+                loadDiary();
+            }
+
+            if (pageId === 'watchlist') loadWatchlist();
+
+            if (pageId === 'profile') {
+                setTimeout(updateProfile, 50);
+            }
+        }
+
+        function loadHome() {
+            updateAllStats();      // Updates the stat cards
+            loadRecentWatched();   // Updates the recent watches
+        }
+
+
+        function loadRecentWatched() {
+            const container = document.getElementById('recent-watched');
+            if (!container) {
+                console.error("❌ Element with ID #recent-watched not found.");
+                return;
+            }
+
+            const diary = JSON.parse(localStorage.getItem('diary') || '[]');
+            const validEntries = diary.filter(e => e && e.Title && e.imdbID && e.dateAdded);
+
+            if (validEntries.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-8">No recent watches. Start exploring!</div>';
+                return;
+            }
+
+            const recent = validEntries.slice(0, 5);
+            if (!window.diaryData) window.diaryData = {}; // Ensure global object
+
+            container.innerHTML = recent.map(entry => {
+                const key = entry.imdbID + entry.dateAdded;
+                diaryData[key] = entry; // Store in global diaryData for modal access
+
+                return `
+      <div class="card-hover cursor-pointer" onclick="openReviewModal('${entry.imdbID}', '${entry.dateAdded}')">
+        <img src="${entry.Poster && entry.Poster !== 'N/A' ? entry.Poster : 'https://via.placeholder.com/300x450?text=No+Image'}" 
+             alt="${entry.Title}" class="w-full h-32 md:h-40 object-contain rounded-lg mb-2">
+        <h4 class="text-lg font-medium truncate text-gray-200">${entry.Title}</h4>
+        <p class="text-xs text-gray-400">${entry.rating ? '★'.repeat(entry.rating) : 'No rating'}</p>
+      </div>
+    `;
+            }).join('');
+        }
+        function toggleUsernameEdit() {
+            const box = document.getElementById('username-edit-box');
+            box.classList.toggle('hidden');
+
+            setTimeout(() => {
+                box.classList.toggle('show', !box.classList.contains('hidden'));
+            }, 10); // allow transition to trigger
+
+            const current = localStorage.getItem('username') || 'Guest';
+            document.getElementById('username-input').value = current;
+        }
+
+
+
+        function saveUsername() {
+            const name = document.getElementById('username-input').value.trim();
+            if (name) {
+                localStorage.setItem('username', name);
+                updateProfile();
+                document.getElementById('username-edit-box').classList.add('hidden');
+            }
+        }
+
+
+        function updateAllStats() {
+           if (!window._diaryCache) {
+  window._diaryCache = JSON.parse(localStorage.getItem('diary') || '[]');
+}
+if (!window._watchlistCache) {
+  window._watchlistCache = JSON.parse(localStorage.getItem('watchlist') || '[]');
+}
+const diary = window._diaryCache;
+const watchlist = window._watchlistCache;
+
+
+            // Home stats
+            const movieCount = diary.filter(e => e.Type === 'movie').length;
+            const seriesCount = diary.filter(e => e.Type === 'series').length;
+            const animeCount = diary.filter(e => e.Type === 'anime').length;
+
+            document.getElementById('home-movies-watched').textContent = movieCount;
+            document.getElementById('home-series-watched').textContent = seriesCount;
+            document.getElementById('home-anime-watched').textContent = animeCount;
+
+            document.getElementById('home-watchlist-count').textContent = watchlist.length;
+
+            const avgRating = diary.filter(e => e.rating).length > 0
+                ? (diary.filter(e => e.rating).reduce((sum, entry) => sum + entry.rating, 0) / diary.filter(e => e.rating).length).toFixed(1)
+                : '0';
+            document.getElementById('home-avg-rating').textContent = avgRating;
+
+            // This month count
+            const thisMonth = new Date();
+            const monthStart = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
+            const thisMonthCount = diary.filter(entry => new Date(entry.dateWatched) >= monthStart).length;
+            document.getElementById('home-this-month').textContent = thisMonthCount;
+        }
+
+        function debounce(func, delay) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+
+        // Search functionality
+        async function searchMedia() {
+            const query = document.getElementById('search-input').value.trim();
+            if (!query) return;
+
+            const searchMovies = document.getElementById('search-movies').checked;
+            const searchAnime = document.getElementById('search-anime').checked;
+
+            const results = [];
+
+            try {
+                // Search OMDb for movies/series
+                const promises = [];
+
+if (searchMovies) {
+  promises.push(
+    fetch(`https://www.omdbapi.com/?s=${encodeURIComponent(query)}&apikey=trilogy`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.Search) {
+          return data.Search.map(item => ({
+            ...item,
+            source: 'omdb',
+            type: item.Type === 'movie' ? 'movie' : 'series'
+          }));
+        }
+        return [];
+      })
+  );
+}
+
+if (searchAnime) {
+  promises.push(
+    fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=10`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.data) {
+          return data.data.map(item => ({
+            Title: item.title,
+            Year: item.aired?.from ? new Date(item.aired.from).getFullYear() : 'N/A',
+            Poster: item.images?.jpg?.image_url || '',
+            imdbID: item.mal_id.toString(),
+            Type: 'anime',
+            source: 'jikan',
+            Plot: item.synopsis,
+            Genre: item.genres?.map(g => g.name).join(', ') || 'N/A',
+            imdbRating: item.score || 'N/A'
+          }));
+        }
+        return [];
+      })
+  );
+}
+
+const resultArrays = await Promise.all(promises);
+const results = resultArrays.flat();
+displaySearchResults(results);
+
+
+                displaySearchResults(results);
+            } catch (error) {
+                console.error('Search error:', error);
+                document.getElementById('search-results').innerHTML = '<div class="col-span-full text-center text-red-400 py-8">Search failed. Please try again.</div>';
+            }
+        }
+
+        function displaySearchResults(results) {
+            const container = document.getElementById('search-results');
+
+            if (results.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-8">No results found.</div>';
+                return;
+            }
+
+            container.innerHTML = results.map(item => `
+                <div class="glass rounded-lg overflow-hidden cursor-pointer card-hover"
+                     onclick="showMediaDetail('${item.imdbID}', '${item.source}')">
+                    <img src="${item.Poster !== 'N/A' ? item.Poster : 'https://via.placeholder.com/300x450?text=No+Image'}" 
+                         alt="${item.Title}" class="w-full h-48 md:h-64 object-contain">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg md:text-base mb-2 truncate text-white">${item.Title}</h3>
+                        <p class="text-gray-400 text-xs mb-1">${item.Year} • ${item.Type}</p>
+                        <p class="text-yellow-400 text-xs">★ ${item.imdbRating || 'N/A'}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Media detail functionality
+        async function showMediaDetail(id, source) {
+            try {
+                let mediaData;
+
+                if (source === 'omdb') {
+                    const response = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=trilogy`);
+                    mediaData = await response.json();
+                } else {
+                    const response = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
+                    const data = await response.json();
+                    const item = data.data;
+                    mediaData = {
+                        Title: item.title,
+                        Year: item.aired?.from ? new Date(item.aired.from).getFullYear() : 'N/A',
+                        Poster: item.images?.jpg?.image_url || '',
+                        Plot: item.synopsis,
+                        Genre: item.genres?.map(g => g.name).join(', ') || 'N/A',
+                        imdbRating: item.score || 'N/A',
+                        Type: 'anime',
+                        imdbID: id
+                    };
+                }
+
+                currentMedia = { ...mediaData, source };
+
+                document.getElementById('modal-title').textContent = mediaData.Title;
+                document.getElementById('modal-year').textContent = `${mediaData.Year} • ${mediaData.Type || 'anime'}`;
+                document.getElementById('modal-genre').textContent = mediaData.Genre;
+                document.getElementById('modal-plot').textContent = mediaData.Plot || 'No description available.';
+                // Extra info (OMDb only)
+                if (source === 'omdb') {
+                    const extraInfoHTML = `
+    <p><strong>Runtime:</strong> ${mediaData.Runtime || 'N/A'}</p>
+    <p><strong>Rated:</strong> ${mediaData.Rated || 'N/A'}</p>
+    <p><strong>Language:</strong> ${mediaData.Language || 'N/A'}</p>
+    <p><strong>Country:</strong> ${mediaData.Country || 'N/A'}</p>
+    <p><strong>Actors:</strong> ${mediaData.Actors || 'N/A'}</p>
+    <p><strong>IMDb:</strong> ★ ${mediaData.imdbRating || 'N/A'} (${mediaData.imdbVotes || '0'} votes)</p>
+  `;
+                    document.getElementById('modal-extra-info').innerHTML = extraInfoHTML;
+                } else {
+                    // Clear if it's anime (Jikan)
+                    document.getElementById('modal-extra-info').innerHTML = '';
+                }
+
+                document.getElementById('modal-poster').src = mediaData.Poster !== 'N/A' ? mediaData.Poster : 'https://via.placeholder.com/300x450?text=No+Image';
+
+                document.getElementById('media-modal').classList.add('active');
+            } catch (error) {
+                console.error('Error loading media details:', error);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('media-modal').classList.remove('active');
+        }
+
+        // Watchlist functionality
+        function addToWatchlist() {
+            if (!currentMedia) return;
+
+            let watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+
+            if (!watchlist.find(item => item.imdbID === currentMedia.imdbID)) {
+                watchlist.push(currentMedia);
+                localStorage.setItem('watchlist', JSON.stringify(watchlist));
+                alert('Added to watchlist!');
+                updateAllStats();
+            } else {
+                alert('Already in watchlist!');
+            }
+
+            closeModal();
+        }
+
+        function loadWatchlist() {
+            const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+            const container = document.getElementById('watchlist-items');
+
+            if (watchlist.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-8">Your watchlist is empty.</div>';
+                return;
+            }
+
+            container.innerHTML = watchlist.map(item => `
+                <div class="glass rounded-lg overflow-hidden card-hover">
+                    <img src="${item.Poster !== 'N/A' ? item.Poster : 'https://via.placeholder.com/300x450?text=No+Image'}" 
+                         alt="${item.Title}" class="w-full h-48 md:h-64 object-contain">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg md:text-base mb-2 text-white">${item.Title}</h3>
+                        <p class="text-gray-400 text-xs mb-3">${item.Year} • ${item.Type || 'anime'}</p>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="removeFromWatchlist('${item.imdbID}')" 
+                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 text-xs rounded transition-colors">
+                                Remove
+                            </button>
+                            <button onclick="markAsWatchedFromList('${item.imdbID}')" 
+                                    class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 text-xs rounded transition-colors">
+                                Mark Watched
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function removeFromWatchlist(id) {
+            let watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+            watchlist = watchlist.filter(item => item.imdbID !== id);
+            localStorage.setItem('watchlist', JSON.stringify(watchlist));
+            loadWatchlist();
+            updateAllStats();
+        }
+
+        function markAsWatchedFromList(id) {
+            const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+            const media = watchlist.find(item => item.imdbID === id);
+            if (media) {
+                currentMedia = media;
+                currentRating = 0;
+                updateStars();
+                document.getElementById('rating-modal').classList.add('active');
+            }
+        }
+
+        // Diary functionality
+        function markAsWatched() {
+            if (!currentMedia) return;
+            currentRating = 0;
+            updateStars();
+            document.getElementById('rating-modal').classList.add('active');
+            closeModal();
+        }
+
+        function updateStars() {
+            document.querySelectorAll('#rating-stars .star').forEach((star, index) => {
+                star.classList.toggle('filled', index < currentRating);
+            });
+        }
+
+        function clearRating() {
+            currentRating = 0;
+            updateStars();
+        }
+
+        function saveDiaryEntry() {
+            if (!currentMedia) return;
+
+            const diary = JSON.parse(localStorage.getItem('diary') || '[]');
+            const entry = {
+                ...currentMedia,
+                rating: currentRating || null,
+                review: document.getElementById('review-text').value || null,
+                dateWatched: document.getElementById('watch-date').value || null,
+                dateAdded: new Date().toISOString(),
+                season: parseInt(document.getElementById('season-number')?.value) || null,
+                episode: parseInt(document.getElementById('episode-number')?.value) || null
+            };
+
+
+            diary.unshift(entry);
+            localStorage.setItem('diary', JSON.stringify(diary));
+
+            // Remove from watchlist if exists
+            let watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+            watchlist = watchlist.filter(item => item.imdbID !== currentMedia.imdbID);
+            localStorage.setItem('watchlist', JSON.stringify(watchlist));
+
+            closeRatingModal();
+            updateAllStats();
+            alert('Added to diary!');
+        }
+
+        function closeRatingModal() {
+            document.getElementById('rating-modal').classList.remove('active');
+            document.getElementById('review-text').value = '';
+            currentRating = 0;
+            updateStars();
+        }
+
+        let diaryData = {}; // Global store for entries
+
+        function loadDiary() {
+            const diary = JSON.parse(localStorage.getItem('diary') || '[]');
+            const container = document.getElementById('diary-entries');
+            diaryData = {}; // Clear and repopulate fresh
+
+            if (diary.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 py-8">Your diary is empty. Start watching!</div>';
+                return;
+            }
+
+            const filteredDiary = filterDiaryEntries(diary);
+
+            container.innerHTML = filteredDiary.map(entry => {
+                const key = entry.imdbID + entry.dateAdded;
+                diaryData[key] = entry;
+
+                return `
+      <div class="glass rounded-xl p-6 card-hover cursor-pointer border border-white/10"
+           onclick="openReviewModal('${entry.imdbID}', '${entry.dateAdded}')">
+        <div class="flex gap-4 items-center">
+          <div class="w-20 h-32 bg-black rounded-lg overflow-hidden flex-shrink-0">
+            <img src="${entry.Poster !== 'N/A' ? entry.Poster : 'https://via.placeholder.com/100x150?text=No+Image'}" 
+                 alt="${entry.Title}" class="h-full object-contain rounded">
+          </div>
+          <div class="flex-1 space-y-1 min-w-0">
+            <h3 class="text-xl font-bold text-white">${entry.Title}</h3>
+            <p class="text-gray-400">${entry.Year} • ${entry.Type || 'anime'}</p>
+            ${entry.rating ? `<div class="text-yellow-400 text-lg">${'★'.repeat(entry.rating)}${'☆'.repeat(5 - entry.rating)}</div>` : '<p class="text-gray-500">No rating</p>'}
+          </div>
+          <div class="flex flex-col items-end gap-2">
+            <button onclick="event.stopPropagation(); openEditDiaryModal('${entry.imdbID}', '${entry.dateAdded}')" 
+                    class="text-blue-400 hover:text-blue-300 text-sm">Edit</button>
+            <button onclick="event.stopPropagation(); removeDiaryEntry('${entry.imdbID}', '${entry.dateAdded}')" 
+                    class="text-red-400 hover:text-red-300 text-sm">Remove</button>
+          </div>
+        </div>
+      </div>
+    `;
+            }).join('');
+        }
+        function openReviewModal(imdbID, dateAdded) {
+            const key = imdbID + dateAdded;
+            const entry = diaryData[key];
+            if (!entry) return;
+
+            const modal = document.getElementById('review-modal');
+            const content = document.getElementById('review-modal-content');
+
+            content.innerHTML = `
+    ${entry.review ? `<p>📝 <strong>Review:</strong><br>${entry.review}</p>` : ''}
+    ${entry.dateWatched ? `<p>📅 <strong>Watched on:</strong> ${new Date(entry.dateWatched).toLocaleDateString()}</p>` : ''}
+    ${entry.Genre ? `<p>🎭 <strong>Genre:</strong> ${entry.Genre}</p>` : ''}
+    ${entry.season ? `<p>📺 <strong>Season:</strong> ${entry.season}, Episode: ${entry.episode ?? '-'}</p>` : ''}
+    ${entry.rating ? `<p>⭐ <strong>Rating:</strong> ${'★'.repeat(entry.rating)}${'☆'.repeat(5 - entry.rating)}</p>` : '<p>No rating</p>'}
+  `;
+
+            history.pushState(null, '', location.href); // Important for back gesture
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeReviewModal() {
+            const modal = document.getElementById('review-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function filterDiary() {
+            loadDiary();
+        }
+
+        function filterDiaryEntries(diary) {
+            const filter = document.getElementById('diary-filter').value;
+            if (filter === 'all') return diary;
+            return diary.filter(entry => entry.Type === filter || (filter === 'anime' && entry.Type === 'anime'));
+        }
+
+        function removeDiaryEntry(id, dateAdded) {
+            const confirmed = confirm("Are you sure you want to remove this review?");
+            if (!confirmed) return;
+
+            let diary = JSON.parse(localStorage.getItem('diary') || '[]');
+            diary = diary.filter(entry => !(entry.imdbID === id && entry.dateAdded === dateAdded));
+            localStorage.setItem('diary', JSON.stringify(diary));
+            loadDiary();
+            updateAllStats();
+        }
+
+
+        // Profile functionality
+        function updateProfile() {
+            const diary = JSON.parse(localStorage.getItem('diary') || '[]');
+            const reviews = diary.filter(e => e.review && e.review.trim() !== '');
+            const username = localStorage.getItem('username') || 'Guest';
+
+            const totalMinutes = diary.reduce((sum, e) => sum + (parseInt(e.Runtime) || 0), 0);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            const timeWatched = totalMinutes ? `${hours}h ${minutes}m` : '--';
+
+            const badges = [];
+            if (diary.length >= 1) badges.push('🎬 First Entry');
+            if (diary.length >= 10) badges.push('🔥 10+ Watched');
+            if (diary.length >= 50) badges.push('🏆 50+ Entries');
+            if (reviews.length >= 5) badges.push('✍️ Reviewer');
+            if (totalMinutes > 1000) badges.push('⏱️ Binge Watcher');
+
+            document.getElementById('profile-username').textContent = username;
+            document.getElementById('profile-total-entries').textContent = diary.length;
+            document.getElementById('profile-total-reviews').textContent = reviews.length;
+            document.getElementById('profile-time-watched').textContent = timeWatched;
+
+            const badgeContainer = document.getElementById('profile-badges');
+            badgeContainer.innerHTML = badges.map(b => `<span class="bg-white/10 px-2 py-1 rounded text-sm">${b}</span>`).join('');
+
+            // ✅ Avatar restore logic
+            const avatar = localStorage.getItem('avatar');
+            if (avatar) {
+                const avatarImg = document.getElementById('profile-avatar');
+                if (avatarImg) avatarImg.src = avatar;
+            }
+
+        }
+        function resetProfile() {
+            if (confirm('Are you sure you want to reset your profile? This will remove your username, avatar, diary, and watchlist data.')) {
+                // Clear all relevant localStorage keys
+                localStorage.removeItem('username');
+                localStorage.removeItem('avatar');
+                localStorage.removeItem('diary');
+                localStorage.removeItem('watchlist');
+
+                // Reset avatar to default immediately
+                const avatarImg = document.getElementById('profile-avatar');
+                if (avatarImg) avatarImg.src = 'https://i.imgur.com/1XjXgJL.png';
+
+                // Update all views
+                updateProfile();
+                updateAllStats();
+                updateWatchlistProgress();
+                loadRecentWatched();
+
+                alert('Profile and media data have been reset.');
+            }
+        }
+
+
+
+        let editingEntryId = null;
+        let editingEntryTimestamp = null;
+
+        function openEditDiaryModal(imdbID, dateAdded) {
+            const diary = JSON.parse(localStorage.getItem('diary') || '[]');
+            const entry = diary.find(e => e.imdbID === imdbID && e.dateAdded === dateAdded);
+            if (!entry) return;
+
+            editingEntryId = imdbID;
+            editingEntryTimestamp = dateAdded;
+
+            document.getElementById('edit-review-text').value = entry.review || '';
+            document.getElementById('edit-watch-date').value = entry.dateWatched || new Date().toISOString().split('T')[0];
+            document.getElementById('edit-season-number').value = entry.season || '';
+            document.getElementById('edit-episode-number').value = entry.episode || '';
+
+            document.getElementById('edit-diary-modal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            editingEntryId = null;
+            editingEntryTimestamp = null;
+            document.getElementById('edit-diary-modal').classList.remove('active');
+        }
+
+        function saveEditedEntry() {
+            const diary = JSON.parse(localStorage.getItem('diary') || '[]');
+            const index = diary.findIndex(e => e.imdbID === editingEntryId && e.dateAdded === editingEntryTimestamp);
+            if (index === -1) return;
+
+            diary[index].review = document.getElementById('edit-review-text').value || null;
+            diary[index].dateWatched = document.getElementById('edit-watch-date').value || new Date().toISOString().split('T')[0];
+            diary[index].season = parseInt(document.getElementById('edit-season-number').value) || null;
+            diary[index].episode = parseInt(document.getElementById('edit-episode-number').value) || null;
+
+            localStorage.setItem('diary', JSON.stringify(diary));
+            closeEditModal();
+            loadDiary();
+            updateAllStats();
+            updateProfile(); // ✅ Add this
+            alert('Diary entry updated successfully!');
+        }
+        function saveUsername() {
+            const name = document.getElementById('username-input').value.trim();
+            if (name) {
+                localStorage.setItem('username', name);
+                updateProfile();
+                document.getElementById('username-input').value = '';
+            }
+        }
+
+        document.getElementById('avatar-upload').addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const avatarData = e.target.result;
+                    localStorage.setItem('avatar', avatarData);
+                    document.getElementById('profile-avatar').src = avatarData;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function toggleUsernameEdit() {
+            const box = document.getElementById('username-edit-box');
+            box.classList.toggle('hidden');
+
+            // Optional: pre-fill current username
+            const current = localStorage.getItem('username') || 'Guest';
+            document.getElementById('username-input').value = current;
+        }
+
+        function saveUsername() {
+            const name = document.getElementById('username-input').value.trim();
+            if (name) {
+                localStorage.setItem('username', name);
+                updateProfile();
+                document.getElementById('username-input').value = '';
+                document.getElementById('username-edit-box').classList.add('hidden');
+            }
+        }
+        // Hide username box when clicking outside
+        document.addEventListener('click', function (e) {
+            const box = document.getElementById('username-edit-box');
+            const trigger = document.getElementById('profile-username');
+
+            if (box.classList.contains('show') && !box.contains(e.target) && e.target !== trigger) {
+                box.classList.remove('show');
+                setTimeout(() => box.classList.add('hidden'), 300); // matches transition duration
+            }
+        });
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const page = document.querySelector('.page:not(.hidden)');
+            const id = page?.id?.replace('-page', '') || 'home';
+
+            // 🚨 Force reload home stats even if already visible
+            if (id === 'home') {
+                loadHome(); // <- this calls updateAllStats() and loadRecentWatched()
+            } else {
+                showPage(id); // for other pages
+            }
+
+            updateWatchlistProgress();
+            setTimeout(updateProfile, 100); // just in case
+        });
+
+
+    </script>
+    <!-- Edit Diary Modal -->
+    <div id="edit-diary-modal" class="modal fixed inset-0 bg-black/80 items-center justify-center z-50 p-4">
+        <div class="glass rounded-xl max-w-md w-full">
+            <div class="p-6">
+                <h3 class="text-xl font-bold mb-6 gradient-text">Edit Entry</h3>
+
+                <textarea id="edit-review-text" rows="3" placeholder="Edit your review"
+                    class="w-full p-3 bg-dark-800 border border-white/20 rounded-lg text-white mb-4 resize-none"></textarea>
+
+                <input type="date" id="edit-watch-date"
+                    class="w-full p-3 bg-dark-800 border border-white/20 rounded-lg text-white mb-4">
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <input type="number" id="edit-season-number" placeholder="Season"
+                        class="p-3 bg-dark-800 border border-white/20 rounded-lg text-white">
+                    <input type="number" id="edit-episode-number" placeholder="Episode"
+                        class="p-3 bg-dark-800 border border-white/20 rounded-lg text-white">
+                </div>
+
+                <div class="flex justify-between gap-3">
+
+                    <button onclick="saveEditedEntry()"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex-1">
+                        Save
+                    </button>
+                    <button onclick="closeEditModal()"
+                        class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Service Worker registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+                    .catch(err => console.error('❌ Service Worker registration failed:', err));
+            });
+        }
+
+    </script>
+    <!-- Review Modal -->
+    <div id="review-modal" class="modal fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
+        <div class="glass max-w-lg w-full rounded-xl p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">Review Details</h3>
+                <button onclick="closeReviewModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div id="review-modal-content"
+                class="space-y-4 text-white text-base leading-relaxed max-h-[70vh] overflow-y-auto scroll-hidden">
+                <!-- Populated via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
